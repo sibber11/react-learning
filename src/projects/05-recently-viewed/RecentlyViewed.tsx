@@ -25,29 +25,55 @@ import { useLocalStorage } from './useLocalStorage'
 const STORAGE_KEY = 'recently-viewed'
 const MAX_RECENT = 5
 
+
 function ProductGrid({ onView }: { onView: (product: Product) => void }) {
-  // TODO: render PRODUCTS, each clickable, calling onView(product).
-  void onView
-  void PRODUCTS
-  return <section><h3>Products</h3></section>
+  return <section><h3>Products</h3>
+    {PRODUCTS.map(product=><ProductCard key={product.id} product={product} onView={onView}/>)}
+  </section>
 }
 
 function RecentList({ ids, onClear }: { ids: number[]; onClear: () => void }) {
-  // TODO: map ids -> products, render them, show empty state, add Clear button.
-  void ids
-  void onClear
-  return <section><h3>Recently viewed</h3></section>
+  const products = ids
+    .map(id => PRODUCTS.find(p => p.id === id))
+    .filter((p): p is Product => p !== undefined)
+  return <section>
+    <h3>Recently viewed <button onClick={onClear}>Clear</button></h3>
+    {products.length > 0
+      ? <ul>{products.map(product => <li key={product.id}><ProductLabel product={product} /></li>)}</ul>
+      : <p>Nothing viewed yet</p>}
+  </section>
+}
+
+function isIdList(value: unknown): value is number[] {
+  return Array.isArray(value) && value.every(v => typeof v === 'number')
 }
 
 export function RecentlyViewed() {
-  const [ids, setIds] = useLocalStorage<number[]>(STORAGE_KEY, [])
-  // TODO: handleView(product) uses setIds(prev => ...) with MAX_RECENT; handleClear resets to [].
-  void setIds
-  void MAX_RECENT
+  const [ids, setIds] = useLocalStorage<number[]>(STORAGE_KEY, [], isIdList)
+  function handleView(product: Product) {
+    setIds(oldIds => [product.id, ...oldIds.filter(id => id !== product.id)].slice(0, MAX_RECENT))
+  }
+  function handleClear() {
+    setIds([]);
+  }
   return (
     <div className="recent">
-      <ProductGrid onView={() => {}} />
-      <RecentList ids={ids} onClear={() => {}} />
+      <ProductGrid onView={handleView} />
+      <RecentList ids={ids} onClear={handleClear} />
     </div>
   )
+}
+
+function ProductLabel({ product }: { product: Product }) {
+  return <>
+    <span>{product.name}</span>
+    <span> - </span>
+    <span>{product.price}</span>
+  </>
+}
+
+function ProductCard({ product, onView }: { product: Product; onView: (product: Product) => void }) {
+  return <button onClick={() => onView(product)}>
+    <ProductLabel product={product} />
+  </button>
 }

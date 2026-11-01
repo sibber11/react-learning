@@ -15,10 +15,35 @@
 //   - Stretch: listen to the window 'storage' event so a second tab stays in sync
 //     (add the listener in useEffect and remove it in the cleanup).
 
-export function useLocalStorage<T>(key: string, initialValue: T) {
-  // TODO: lazy-init state from localStorage, persist in useEffect.
-  void key
-  const value = initialValue
-  const setValue = (_next: T | ((prev: T) => T)) => {}
+import { useEffect, useState } from "react"
+
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T,
+  validate?: (value: unknown) => value is T,
+) {
+  function read(): T {
+    try {
+      const stored = localStorage.getItem(key)
+      if (stored !== null) {
+        const parsed: unknown = JSON.parse(stored)
+        if (!validate || validate(parsed)) return parsed as T
+      }
+    } catch {
+      // blocked storage or corrupt JSON: fall back to initialValue
+    }
+    return initialValue
+  }
+
+  const [value, setValue] = useState<T>(() => read())
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value))
+    } catch {
+      // storage full or blocked: keep working in memory
+    }
+  }, [key, value])
+
   return [value, setValue] as const
 }
