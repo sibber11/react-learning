@@ -2,7 +2,8 @@
 // import { TodoList } from './projects/01-state-and-lists/TodoList'
 // import { SignupForm } from './projects/02-forms/SignupForm'
 // import { UserSearch } from './projects/03-fetch/UserSearch'
-import { Cart } from './projects/04-context-reducer/Cart'
+// import { Cart } from './projects/04-context-reducer/Cart'
+import { RecentlyViewed } from './projects/05-recently-viewed/RecentlyViewed'
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
       {/* <TodoList /> */}
       {/* <SignupForm /> */}
       {/* <UserSearch /> */}
-      <Cart />
+      {/* <Cart /> */}
+      <RecentlyViewed />
     </main>
   )
 }

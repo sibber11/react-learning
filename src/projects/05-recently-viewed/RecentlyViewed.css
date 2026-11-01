@@ -1,0 +1,22 @@
+.recent {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.recent section {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.recent h3 {
+  margin: 0 0 0.75rem;
+}
+
+.recent ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
