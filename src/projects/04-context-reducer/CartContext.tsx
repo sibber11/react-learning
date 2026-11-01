@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, type Dispatch, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, useReducer, type Dispatch, type ReactNode } from 'react'
 import { cartReducer, initialCart, type CartAction, type CartState } from './cartReducer'
 
 // YOUR TURN. Share the cart with any component below <CartProvider>.
@@ -20,20 +20,18 @@ type CartContextValue = {
   dispatch: Dispatch<CartAction>
 }
 
-// TODO: create the context.
 const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  // TODO: useReducer, then render <CartContext.Provider value={...}>.
-  void useReducer
-  void cartReducer
-  void initialCart
-  void CartContext
-  return <>{children}</>
+  const [state, dispatch] = useReducer(cartReducer, initialCart)
+  const value = useMemo(() => ({ state, dispatch }), [state])
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
 
 export function useCart(): CartContextValue {
-  // TODO: useContext, throw if null.
-  void useContext
-  throw new Error('useCart not implemented')
+  const ctx = useContext(CartContext)
+  if (ctx === null) {
+    throw new Error('useCart must be used inside <CartProvider>')
+  }
+  return ctx
 }

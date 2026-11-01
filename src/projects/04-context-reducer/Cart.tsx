@@ -1,5 +1,6 @@
+import './Cart.css'
 import { CartProvider, useCart } from './CartContext'
-import type { Product } from './cartReducer'
+import type { CartItem, Product } from './cartReducer'
 
 // YOUR TURN. Build the UI on top of useCart(). Do not edit the reducer from here.
 //
@@ -23,26 +24,69 @@ const PRODUCTS: Product[] = [
 
 function ProductList() {
   const { dispatch } = useCart()
-  // TODO: render PRODUCTS with an Add button that dispatches { type: 'add', product }.
-  void dispatch
-  void PRODUCTS
-  return <section><h3>Products</h3></section>
+  return (
+    <section>
+      <h3>Products</h3>
+      <ul>
+        {PRODUCTS.map(product => (
+          <li key={product.id}>
+            <span>{product.name}</span>
+            <button onClick={() => dispatch({ type: 'add', product })}>Add</button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function CartLine({ item }: { item: CartItem }) {
+  const { dispatch } = useCart()
+  const setQty = (qty: number) => dispatch({ type: 'setQty', id: item.id, qty })
+  return (
+    <li>
+      <span>{item.name} x {item.qty}</span>
+      <button onClick={() => setQty(item.qty - 1)}>-</button>
+      <button onClick={() => setQty(item.qty + 1)}>+</button>
+      <button onClick={() => dispatch({ type: 'remove', id: item.id })}>remove</button>
+      Price: {item.price * item.qty}
+    </li>
+  )
 }
 
 function CartView() {
   const { state, dispatch } = useCart()
-  // TODO: render lines, +/- , remove, derived count + total, clear.
-  void state
-  void dispatch
-  return <section><h3>Cart</h3></section>
+  const count = state.items.reduce((sum, item) => sum + item.qty, 0)
+  const total = state.items.reduce((sum, item) => sum + item.price * item.qty, 0)
+
+  return (
+    <section>
+      <h3>Cart</h3>
+      {state.items.length === 0 ? (
+        <p>Cart is empty</p>
+      ) : (
+        <>
+          <ul>
+            {state.items.map(item => (
+              <CartLine key={item.id} item={item} />
+            ))}
+          </ul>
+          <p>Items: {count}</p>
+          <p>Total: {total}</p>
+          <button onClick={() => dispatch({ type: 'clear' })}>Clear</button>
+        </>
+      )}
+    </section>
+  )
 }
 
 export function Cart() {
   return (
     <CartProvider>
-      <h2>Cart (context + reducer)</h2>
-      <ProductList />
-      <CartView />
+      <div className="cart">
+        <h2>Cart (context + reducer)</h2>
+        <ProductList />
+        <CartView />
+      </div>
     </CartProvider>
   )
 }

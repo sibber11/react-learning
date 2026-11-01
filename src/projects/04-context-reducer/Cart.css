@@ -1,0 +1,58 @@
+.cart {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.cart section {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.cart h3 {
+  margin: 0 0 0.75rem;
+}
+
+.cart ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cart li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart li:last-child {
+  border-bottom: 0;
+}
+
+.cart li > :first-child {
+  flex: 1;
+}
+
+.cart p {
+  margin: 0.5rem 0 0;
+}
+
+.cart button {
+  padding: 0.25rem 0.75rem;
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cart button:hover {
+  background: var(--accent-border);
+}
+
+.cart button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

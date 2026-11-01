@@ -34,7 +34,30 @@ export type CartAction =
 export const initialCart: CartState = { items: [] }
 
 export function cartReducer(state: CartState, action: CartAction): CartState {
-  // TODO: handle every action type.
-  void action
-  return state
+  switch (action.type) {
+    case 'add': {
+      const exists = state.items.some(i => i.id === action.product.id)
+      return {
+        ...state,
+        items: exists
+          ? state.items.map(i => (i.id === action.product.id ? { ...i, qty: i.qty + 1 } : i))
+          : [...state.items, { ...action.product, qty: 1 }],
+      }
+    }
+    case 'remove':
+      return { ...state, items: state.items.filter(i => i.id !== action.id) }
+    case 'setQty':
+      return {
+        ...state,
+        items: action.qty <= 0
+          ? state.items.filter(i => i.id !== action.id)
+          : state.items.map(i => (i.id === action.id ? { ...i, qty: action.qty } : i)),
+      }
+    case 'clear':
+      return initialCart
+    default: {
+      const unreachable: never = action
+      return unreachable
+    }
+  }
 }
